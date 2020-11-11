@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './app.css';
 
 const imageAdress = 'https://media.macphun.com/img/uploads/customer/how-to/579/15531840725c93b5489d84e9.43781620.jpg?q=85&w=1340';
@@ -14,6 +14,7 @@ look at the home. Furnished rooms at a cost of $8 a week. There is little more t
 In the hall below was a letter-box too small to hold a letter. There
 was an electric bell, but it could not make a sound. Also there was a
 name beside the door: “Mr. James Dillingham Young.”`;
+const secondImg = 'https://images.assetsdelivery.com/compings_v2/biletskiy/biletskiy1506/biletskiy150600086.jpg'
 
 import {
   Carousel,
@@ -21,30 +22,88 @@ import {
 } from './components';
 
 export const App = () => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const carouselRef = useRef(null);
   const content = [
     <div>{text}</div>,
-    <img style={{ height: '100%' }} src={imageAdress} alt='A Mysterious girl' />
+    <img style={{ height: '100%' }} src={imageAdress} alt='A Mysterious girl' />,
+    <img style={{ height: '100%' }} src={secondImg} alt='Beautiful field' />,
   ]
+  const [carouselContent, setCarouselContent] = useState(content);
+  const [currentPage, setCurrentPage] = useState(1);
+  const carouselRef = useRef(null);
+
+  useEffect(() => {
+    setCarouselContent(carouselContent => {
+      const newContent = [...carouselContent];
+      const firstItem = content[0];
+      const lastItem = content[content.length - 1];
+      newContent.unshift(lastItem);
+      newContent.push(firstItem);
+
+      return newContent;
+    });
+
+    carouselRef.current.style.transform = `translateX(-${currentPage * 100}%)`;
+  }, [])
+
+  useEffect(() => {
+    const onTransitionEnd = () => {
+      if (currentPage > content.length) {
+        const resetPage = 1;
+        const carouselStyle = carouselRef.current.style;
+        carouselStyle.transition = 'none';
+        carouselStyle.transform = `translateX(-${100 * resetPage}%)`;
+        setCurrentPage(resetPage);
+      }
+
+      if (currentPage <= 0) {
+        const lastPage = content.length;
+        const carouselStyle = carouselRef.current.style;
+        carouselStyle.transition = 'none';
+        carouselStyle.transform = `translateX(-${100 * lastPage}%)`;
+        setCurrentPage(lastPage);
+      }
+    }
+
+    window.addEventListener('transitionend', onTransitionEnd);
+    return () => window.removeEventListener('transitionend', onTransitionEnd);
+  })
 
   const handlePrev = () => {
-
+    const decrCurrentPage = currentPage - 1;
+    const carouselStyle = carouselRef.current.style;
+    carouselStyle.transition = '0.5s';
+    carouselStyle.transform = `translateX(-${100 * decrCurrentPage}%)`;
+    setCurrentPage(decrCurrentPage);
   }
 
   const handleNext = () => {
-    setCurrentPage(currentPage => currentPage + 1);
-    carouselRef.current.style.transform = `translateX(-${100 * currentPage}%)`;
+    if (currentPage > content.length) {
+      const resetPage = 1;
+      const carouselStyle = carouselRef.current.style;
+      carouselStyle.transition = 'none';
+      carouselStyle.transform = `translateX(-${100 * resetPage}%)`;
+      setCurrentPage(resetPage);
+    } else {
+      const newCurrentPage = currentPage + 1;
+      const carouselStyle = carouselRef.current.style;
+      carouselStyle.transition = '0.5s';
+      carouselStyle.transform = `translateX(-${newCurrentPage * 100}%)`;
+      carouselStyle.justifyContent = 'flex-start';
+      setCurrentPage(newCurrentPage);
+    }
   }
 
   return (
     <div className='app'>
       <Carousel
         ref={carouselRef}
-        content={content}
+        content={carouselContent}
+        handleNext={handleNext}
+        handlePrev={handlePrev}
       />
       <Pagination
         handleNext={handleNext}
+        handlePrev={handlePrev}
       />
     </div>
   )

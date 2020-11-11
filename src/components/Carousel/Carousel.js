@@ -1,33 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './carousel.css';
 
-export const Carousel = React.forwardRef(({ content }, ref) => {
-  const [carouselContent, setCarouselContent] = useState(content);
+const THRESHOLD = 10;
 
-  useEffect(() => {
-    const onTransitionEnd = () => {
-      const newContent = [...content];
-      const firstItem = newContent.shift();
-      newContent.push(firstItem);
-      if (firstItem === content[0]){
-        ref.current.style.transition = 'transformX(0)';
-      }
-      console.log(newContent);
+export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, ref) => {
+  const [startMouse, setStartMouse] = useState(null);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [left, setLeft] = useState(null);
+  const [right, setRight] = useState(null);
 
-      setCarouselContent(newContent);
+  const handleMouseDown = ({ pageX }) => {
+    setStartMouse(pageX)
+    setIsMouseDown(true);
+  }
+
+  const handleMouseUp = () => {
+    if (left >= THRESHOLD) {
+      handleNext();
+    } else if (right >= THRESHOLD) {
+      handlePrev();
     }
 
-    window.addEventListener('transitionend', onTransitionEnd);
-    return () => window.removeEventListener('transitionend', onTransitionEnd);
-  })
+    setIsMouseDown(false);
+  }
 
-  console.log(carouselContent);
+  const handleMouseMove = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const { pageX } = e;
+
+    if (isMouseDown) {
+      const moveRight = pageX - startMouse;
+      const moveLeft = startMouse - pageX;
+      const carouselWidth = ref.current.scrollWidth;
+      const carouselShift = +ref.current.style.transform.match(/\d+/)[0];
+      const pageWidth = ref.current.clientWidth;
+      const perToPix = 100 / pageWidth * carouselShift;
+
+      console.log(carouselShift);
+      console.log(perToPix);
+      console.log(e);
+      console.dir(ref.current);
+
+      // ref.current.style.transform = `translateX(-${perToPix}px)`;
+    }
+  }
 
   return (
-    <ul ref={ref} className='carousel'>
-      {
-        carouselContent.map((item, i) => <li className='carousel__item' key={i}>{ item }</li>)
-      }
-    </ul>
-  )
+    <div className="carousel-track">
+      <ul
+        ref={ref}
+        className="carousel"
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMoveCapture={handleMouseMove}
+      >
+        {content.map((item, i) => (
+          <li className="carousel__item" key={i}>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 });

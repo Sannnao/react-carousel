@@ -1,24 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './carousel.css';
 
-const THRESHOLD = 10;
+const THRESHOLD = 300;
 
 export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, ref) => {
   const [startMouse, setStartMouse] = useState(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [left, setLeft] = useState(null);
-  const [right, setRight] = useState(null);
+  const [currentTranslate, setCurrentTraslate] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
+  const [carouselShift, setCarouselShift] = useState(null);
+
+  useEffect(() => {
+     ref.current.style.transform = `translateX(-${currentTranslate}px)`;
+  }, [currentTranslate])
 
   const handleMouseDown = ({ pageX }) => {
-    setStartMouse(pageX)
+    const carouselShift = +ref.current.style.transform.match(/\d+/)[0];
+
+    setCarouselShift(carouselShift);
+    setStartMouse(pageX);
     setIsMouseDown(true);
   }
 
-  const handleMouseUp = () => {
-    if (left >= THRESHOLD) {
+  const handleMouseUp = ({ pageX }) => {
+    const moveRight = pageX - startMouse;
+    const moveLeft = startMouse - pageX;
+
+    if (moveLeft >= THRESHOLD) {
       handleNext();
-    } else if (right >= THRESHOLD) {
+    } else if (moveRight >= THRESHOLD) {
       handlePrev();
+    } else {
+      ref.current.style.transform = `translateX(-${prevPage}px)`;
     }
 
     setIsMouseDown(false);
@@ -26,23 +39,13 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
 
   const handleMouseMove = (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    const { pageX } = e;
-
     if (isMouseDown) {
-      const moveRight = pageX - startMouse;
-      const moveLeft = startMouse - pageX;
-      const carouselWidth = ref.current.scrollWidth;
-      const carouselShift = +ref.current.style.transform.match(/\d+/)[0];
+
       const pageWidth = ref.current.clientWidth;
-      const perToPix = 100 / pageWidth * carouselShift;
+      const currTranslate = carouselShift - (e.pageX - startMouse);
 
-      console.log(carouselShift);
-      console.log(perToPix);
-      console.log(e);
-      console.dir(ref.current);
-
-      // ref.current.style.transform = `translateX(-${perToPix}px)`;
+      setPrevPage(pageWidth);
+      setCurrentTraslate(currTranslate);
     }
   }
 

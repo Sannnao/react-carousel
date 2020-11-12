@@ -1,4 +1,5 @@
 .app {
+  position: relative;
   display: grid;
   height: 100%;
   grid-template-rows: 95vh 1fr;

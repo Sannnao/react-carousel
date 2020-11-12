@@ -29,7 +29,15 @@ export const App = () => {
   ]
   const [carouselContent, setCarouselContent] = useState(content);
   const [currentPage, setCurrentPage] = useState(1);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const carouselRef = useRef(null);
+
+  useEffect(() => {
+    const handleWindowWidth = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleWindowWidth);
+
+    return () => window.removeEventListener('resize', handleWindowWidth);
+  })
 
   useEffect(() => {
     setCarouselContent(carouselContent => {
@@ -42,7 +50,7 @@ export const App = () => {
       return newContent;
     });
 
-    carouselRef.current.style.transform = `translateX(-${currentPage * 100}%)`;
+    carouselRef.current.style.transform = `translateX(-${currentPage * windowWidth}px)`;
   }, [])
 
   useEffect(() => {
@@ -51,7 +59,7 @@ export const App = () => {
         const resetPage = 1;
         const carouselStyle = carouselRef.current.style;
         carouselStyle.transition = 'none';
-        carouselStyle.transform = `translateX(-${100 * resetPage}%)`;
+        carouselStyle.transform = `translateX(-${resetPage * windowWidth}px)`;
         setCurrentPage(resetPage);
       }
 
@@ -59,7 +67,7 @@ export const App = () => {
         const lastPage = content.length;
         const carouselStyle = carouselRef.current.style;
         carouselStyle.transition = 'none';
-        carouselStyle.transform = `translateX(-${100 * lastPage}%)`;
+        carouselStyle.transform = `translateX(-${lastPage * windowWidth}px)`;
         setCurrentPage(lastPage);
       }
     }
@@ -72,7 +80,7 @@ export const App = () => {
     const decrCurrentPage = currentPage - 1;
     const carouselStyle = carouselRef.current.style;
     carouselStyle.transition = '0.5s';
-    carouselStyle.transform = `translateX(-${100 * decrCurrentPage}%)`;
+    carouselStyle.transform = `translateX(-${decrCurrentPage * windowWidth}px)`;
     setCurrentPage(decrCurrentPage);
   }
 
@@ -81,13 +89,13 @@ export const App = () => {
       const resetPage = 1;
       const carouselStyle = carouselRef.current.style;
       carouselStyle.transition = 'none';
-      carouselStyle.transform = `translateX(-${100 * resetPage}%)`;
+      carouselStyle.transform = `translateX(-${resetPage * windowWidth}px)`;
       setCurrentPage(resetPage);
     } else {
       const newCurrentPage = currentPage + 1;
       const carouselStyle = carouselRef.current.style;
       carouselStyle.transition = '0.5s';
-      carouselStyle.transform = `translateX(-${newCurrentPage * 100}%)`;
+      carouselStyle.transform = `translateX(-${newCurrentPage * windowWidth}px)`;
       carouselStyle.justifyContent = 'flex-start';
       setCurrentPage(newCurrentPage);
     }

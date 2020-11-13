@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import './carousel.css';
 
-const THRESHOLD = 300;
+const THRESHOLD = 200;
 
 export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, ref) => {
   const [startMouse, setStartMouse] = useState(null);
@@ -21,8 +21,11 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
     }
   })
 
-  useEffect(() => {
-     ref.current.style.transform = `translateX(-${currentTranslate}px)`;
+  useLayoutEffect(() => {
+    if (isMouseDown) {
+      console.log('current translate', currentTranslate);
+      ref.current.style.transform = `translateX(-${currentTranslate}px)`;
+    }
   }, [currentTranslate])
 
   const handleMouseDown = ({ pageX }) => {
@@ -41,15 +44,18 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
     const moveRight = pageX - startMouse;
     const moveLeft = startMouse - pageX;
     console.log('move left', moveLeft);
-    ref.current.style.transition = '0.5s'
+    ref.current.style.transition = '0.3s'
 
     if (moveLeft >= THRESHOLD) {
+      console.log('NEXT');
       handleNext();
       setStartMouse(pageX);
     } else if (moveRight >= THRESHOLD) {
+      console.log('PREV')
       handlePrev();
       setStartMouse(pageX);
     } else {
+      console.log('SAME')
       ref.current.style.transform = `translateX(-${carouselShift}px)`;
     }
 
@@ -60,8 +66,6 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
     e.preventDefault();
     if (isMouseDown) {
       const currTranslate = carouselShift - (e.pageX - startMouse);
-
-      console.log(e.pageX - startMouse)
 
       setCurrentTraslate(currTranslate);
     }

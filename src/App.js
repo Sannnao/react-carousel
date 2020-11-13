@@ -33,11 +33,19 @@ export const App = () => {
   const carouselRef = useRef(null);
 
   useEffect(() => {
-    const handleWindowWidth = () => setWindowWidth(window.innerWidth);
+    const handleWindowWidth = () => {
+      carouselRef.current.style.transition = 'none';
+      carouselRef.current.style.transform = `translateX(-${currentPage * windowWidth}px)`;
+      setWindowWidth(window.innerWidth);
+    }
     window.addEventListener('resize', handleWindowWidth);
 
     return () => window.removeEventListener('resize', handleWindowWidth);
   })
+
+  useEffect(() => {
+    console.log(currentPage);
+  }, [currentPage])
 
   useEffect(() => {
     setCarouselContent(carouselContent => {
@@ -81,12 +89,10 @@ export const App = () => {
     const carouselStyle = carouselRef.current.style;
     carouselStyle.transition = '0.5s';
     carouselStyle.transform = `translateX(-${decrCurrentPage * windowWidth}px)`;
-    console.log(currentPage);
     setCurrentPage(decrCurrentPage);
   }
 
   const handleNext = () => {
-    console.log('WHYYY')
     if (currentPage === content.length - 1) {
       const resetPage = 0;
       const carouselStyle = carouselRef.current.style;
@@ -98,7 +104,6 @@ export const App = () => {
       carouselStyle.transform = `translateX(-${newCurrentPage * windowWidth}px)`;
       setCurrentPage(newCurrentPage);
     }
-    console.log(currentPage);
   }
 
   return (

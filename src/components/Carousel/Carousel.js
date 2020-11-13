@@ -7,8 +7,19 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
   const [startMouse, setStartMouse] = useState(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [currentTranslate, setCurrentTraslate] = useState(null);
-  const [prevPage, setPrevPage] = useState(null);
   const [carouselShift, setCarouselShift] = useState(null);
+
+  useEffect(() => {
+    window.addEventListener('mousedown', handleMouseDown)
+    window.addEventListener('mouseup', handleMouseUp)
+    window.addEventListener('mousemove', handleMouseMove)
+
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('mousemove', handleMouseMove)
+    }
+  })
 
   useEffect(() => {
      ref.current.style.transform = `translateX(-${currentTranslate}px)`;
@@ -33,15 +44,12 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
     ref.current.style.transition = '0.5s'
 
     if (moveLeft >= THRESHOLD) {
-      console.log('WHY')
       handleNext();
       setStartMouse(pageX);
     } else if (moveRight >= THRESHOLD) {
       handlePrev();
       setStartMouse(pageX);
     } else {
-      console.log('prevPage', prevPage);
-
       ref.current.style.transform = `translateX(-${carouselShift}px)`;
     }
 
@@ -61,12 +69,12 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
 
   return (
     <div className="carousel-track">
+      {isMouseDown
+        && <div className="carousel-move-wrapper"></div>
+      }
       <ul
         ref={ref}
         className="carousel"
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMoveCapture={handleMouseMove}
       >
         {content.map((item, i) => (
           <li className="carousel__item" key={i}>

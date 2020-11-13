@@ -15,7 +15,9 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
   }, [currentTranslate])
 
   const handleMouseDown = ({ pageX }) => {
+    console.log('mouse down')
     const carouselShift = +ref.current.style.transform.match(/\d+/)[0];
+    ref.current.style.transition = 'none'
 
     setCarouselShift(carouselShift);
     setStartMouse(pageX);
@@ -23,15 +25,24 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
   }
 
   const handleMouseUp = ({ pageX }) => {
+    console.log('mouse up')
+
     const moveRight = pageX - startMouse;
     const moveLeft = startMouse - pageX;
+    console.log('move left', moveLeft);
+    ref.current.style.transition = '0.5s'
 
     if (moveLeft >= THRESHOLD) {
+      console.log('WHY')
       handleNext();
+      setStartMouse(pageX);
     } else if (moveRight >= THRESHOLD) {
       handlePrev();
+      setStartMouse(pageX);
     } else {
-      ref.current.style.transform = `translateX(-${prevPage}px)`;
+      console.log('prevPage', prevPage);
+
+      ref.current.style.transform = `translateX(-${carouselShift}px)`;
     }
 
     setIsMouseDown(false);
@@ -40,11 +51,10 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
   const handleMouseMove = (e) => {
     e.preventDefault();
     if (isMouseDown) {
-
-      const pageWidth = ref.current.clientWidth;
       const currTranslate = carouselShift - (e.pageX - startMouse);
 
-      setPrevPage(pageWidth);
+      console.log(e.pageX - startMouse)
+
       setCurrentTraslate(currTranslate);
     }
   }

@@ -28,7 +28,7 @@ export const App = () => {
     <img style={{ height: '100%' }} src={secondImg} alt='Beautiful field' />,
   ]
   const [carouselContent, setCarouselContent] = useState(content);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const carouselRef = useRef(null);
 
@@ -42,10 +42,10 @@ export const App = () => {
   useEffect(() => {
     setCarouselContent(carouselContent => {
       const newContent = [...carouselContent];
-      const firstItem = content[0];
-      const lastItem = content[content.length - 1];
-      newContent.unshift(lastItem);
-      newContent.push(firstItem);
+      // const firstItem = content[0];
+      // const lastItem = content[content.length - 1];
+      // newContent.unshift(lastItem);
+      // newContent.push(firstItem);
 
       return newContent;
     });
@@ -53,52 +53,52 @@ export const App = () => {
     carouselRef.current.style.transform = `translateX(-${currentPage * windowWidth}px)`;
   }, [])
 
-  useEffect(() => {
-    const onTransitionEnd = () => {
-      if (currentPage > content.length) {
-        const resetPage = 1;
-        const carouselStyle = carouselRef.current.style;
-        carouselStyle.transition = 'none';
-        carouselStyle.transform = `translateX(-${resetPage * windowWidth}px)`;
-        setCurrentPage(resetPage);
-      }
+  // useEffect(() => {
+  //   const onTransitionEnd = () => {
+  //     if (currentPage > content.length) {
+  //       const resetPage = 1;
+  //       const carouselStyle = carouselRef.current.style;
+  //       carouselStyle.transition = 'none';
+  //       carouselStyle.transform = `translateX(-${resetPage * windowWidth}px)`;
+  //       setCurrentPage(resetPage);
+  //     }
 
-      if (currentPage <= 0) {
-        const lastPage = content.length;
-        const carouselStyle = carouselRef.current.style;
-        carouselStyle.transition = 'none';
-        carouselStyle.transform = `translateX(-${lastPage * windowWidth}px)`;
-        setCurrentPage(lastPage);
-      }
-    }
+  //     if (currentPage <= 0) {
+  //       const lastPage = content.length;
+  //       const carouselStyle = carouselRef.current.style;
+  //       carouselStyle.transition = 'none';
+  //       carouselStyle.transform = `translateX(-${lastPage * windowWidth}px)`;
+  //       setCurrentPage(lastPage);
+  //     }
+  //   }
 
-    window.addEventListener('transitionend', onTransitionEnd);
-    return () => window.removeEventListener('transitionend', onTransitionEnd);
-  })
+  //   window.addEventListener('transitionend', onTransitionEnd);
+  //   return () => window.removeEventListener('transitionend', onTransitionEnd);
+  // })
 
   const handlePrev = () => {
     const decrCurrentPage = currentPage - 1;
     const carouselStyle = carouselRef.current.style;
     carouselStyle.transition = '0.5s';
     carouselStyle.transform = `translateX(-${decrCurrentPage * windowWidth}px)`;
+    console.log(currentPage);
     setCurrentPage(decrCurrentPage);
   }
 
   const handleNext = () => {
-    if (currentPage > content.length) {
-      const resetPage = 1;
+    console.log('WHYYY')
+    if (currentPage === content.length - 1) {
+      const resetPage = 0;
       const carouselStyle = carouselRef.current.style;
-      carouselStyle.transition = 'none';
       carouselStyle.transform = `translateX(-${resetPage * windowWidth}px)`;
       setCurrentPage(resetPage);
     } else {
       const newCurrentPage = currentPage + 1;
       const carouselStyle = carouselRef.current.style;
-      carouselStyle.transition = '0.5s';
       carouselStyle.transform = `translateX(-${newCurrentPage * windowWidth}px)`;
-      carouselStyle.justifyContent = 'flex-start';
       setCurrentPage(newCurrentPage);
     }
+    console.log(currentPage);
   }
 
   return (

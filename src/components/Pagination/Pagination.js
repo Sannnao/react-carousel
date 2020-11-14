@@ -4,8 +4,18 @@ import './pagination.css';
 export const Pagination = ({ handlePrev, handleNext }) => {
   return (
     <div className='pagination'>
-      <button onClick={handlePrev}>{'<'}</button>
-      <button onClick={handleNext}>{'>'}</button>
+      <button
+        className='pagination__btn'
+        onClick={handlePrev}
+      >
+        {'<'}
+      </button>
+      <button
+        className='pagination__btn'
+        onClick={handleNext}
+      >
+        {'>'}
+      </button>
     </div>
   )
 }

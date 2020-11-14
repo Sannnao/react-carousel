@@ -87,6 +87,7 @@ export const App = () => {
       return newContent;
     });
 
+    carouselRef.current.style.transition = 'none';
     carouselRef.current.style.transform = `translateX(-${currentPage * windowWidth}px)`;
   }, [])
 

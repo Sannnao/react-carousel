@@ -2,24 +2,23 @@ import React, { useState, useEffect } from 'react';
 import './page-tracker.css';
 
 export const PageTracker = ({ pagesCount, chooseCurrentPage, currentPage }) => {
-  const [inputValue, setInputValue] = useState(currentPage);
+  const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
     setInputValue(currentPage);
   }, [currentPage])
 
   const handleInputValue = (e) => {
-    const value = +e.target.value;
+    const value = e.target.value;
 
-    if (typeof value === 'number' && !isNaN(value)) {
+    if (typeof +value === 'number' && !isNaN(+value)) {
       setInputValue(value);
     }
   }
 
   const submitCurrentPage = (e) => {
-    if (e.code === 'Enter' || e.code === 'NumpadEnter') {
-      chooseCurrentPage(inputValue);
-    }
+    e.preventDefault();
+    chooseCurrentPage(inputValue);
   }
 
   const switchPage = (page) => {
@@ -40,7 +39,9 @@ export const PageTracker = ({ pagesCount, chooseCurrentPage, currentPage }) => {
           })
         }
       </ul>
-      <input className="page-tracker__input" onChange={handleInputValue} value={inputValue} onKeyDown={submitCurrentPage} />
+      <form onSubmit={submitCurrentPage}>
+        <input className="page-tracker__input" onChange={handleInputValue} value={inputValue} />
+      </form>
     </div>
   )
 }

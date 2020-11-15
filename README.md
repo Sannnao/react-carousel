@@ -1,5 +1,5 @@
 # react-carousel
-
+[App example](https://sannnao.github.io/react-carousel/)
 ## To use the carousel:
 1. `git clone https://github.com/Sannnao/react-carousel.git`
 2. `cd react-carousel`

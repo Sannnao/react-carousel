@@ -21,8 +21,8 @@ const secondImg = 'https://images.assetsdelivery.com/compings_v2/biletskiy/bilet
 
 const content = [
   <div>{text}</div>,
-  <img style={{ height: '100%' }} src={imageAdress} alt='A Mysterious girl' />,
-  <img style={{ height: '100%' }} src={secondImg} alt='Beautiful field' />,
+  <img style={{ width: '100%' }} src={imageAdress} alt='A Mysterious girl' />,
+  <img style={{ width: '100%' }} src={secondImg} alt='Beautiful field' />,
 ]
 
 ReactDOM.render(<App content={content} />, document.getElementById('root'));

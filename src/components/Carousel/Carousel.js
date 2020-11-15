@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import './carousel.css';
 
-const THRESHOLD = 200;
+const THRESHOLD = 100;
 
 export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, ref) => {
   const [startMouse, setStartMouse] = useState(null);

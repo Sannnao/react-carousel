@@ -1,0 +1,44 @@
+.page-tracker {
+  position: absolute;
+  bottom: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+}
+
+.page-tracker__pages {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  list-style: none;
+}
+
+.page-tracker__round {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+  margin: 0 3px;
+  border: 1px solid rgb(223, 221, 221);
+  box-shadow: 0 0 5px 0 grey;
+  border-radius: 50%;
+}
+
+.page-tracker__round--current {
+  width: 17px;
+  height: 17px;
+  background-color: #fff;
+  box-shadow: 0 0 5px 0 grey;
+  border-radius: 50%;
+}
+
+.page-tracker__input {
+  width: 30px;
+  height: 25px;
+  text-align: center;
+}

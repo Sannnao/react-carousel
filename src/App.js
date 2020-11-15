@@ -1,32 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './app.css';
 
-const imageAdress = 'https://media.macphun.com/img/uploads/customer/how-to/579/15531840725c93b5489d84e9.43781620.jpg?q=85&w=1340';
-const text = `T h e G i f t o f t h e M a g i
-ONE DOLLAR AND EIGHTY-SEVEN CENTS.
-That was all. She had put it aside, one cent and then another and then
-another, in her careful buying of meat and other food. Della counted
-it three times. One dollar and eighty-seven cents. And the next day
-would be Christmas.
-There was nothing to do but fall on the bed and cry. So Della did it.
-While the lady of the home is slowly growing quieter, we can
-look at the home. Furnished rooms at a cost of $8 a week. There is little more to say about it.
-In the hall below was a letter-box too small to hold a letter. There
-was an electric bell, but it could not make a sound. Also there was a
-name beside the door: “Mr. James Dillingham Young.”`;
-const secondImg = 'https://images.assetsdelivery.com/compings_v2/biletskiy/biletskiy1506/biletskiy150600086.jpg'
-
 import {
   Carousel,
   Pagination,
+  PageTracker,
 } from './components';
 
-export const App = () => {
-  const content = [
-    <div>{text}</div>,
-    <img style={{ height: '100%' }} src={imageAdress} alt='A Mysterious girl' />,
-    <img style={{ height: '100%' }} src={secondImg} alt='Beautiful field' />,
-  ]
+export const App = ({ content }) => {
   const [carouselContent, setCarouselContent] = useState(content);
   const [currentPage, setCurrentPage] = useState(1);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -41,7 +22,7 @@ export const App = () => {
     window.addEventListener('resize', handleWindowWidth);
 
     return () => window.removeEventListener('resize', handleWindowWidth);
-  }, [])
+  }, [currentPage, windowWidth])
 
   useEffect(() => {
     const handleCornerPages = () => {
@@ -71,7 +52,6 @@ export const App = () => {
   })
 
   useEffect(() => {
-    console.log('currentPage', currentPage, currentPage * windowWidth);
     const carouselStyle = carouselRef.current.style;
     carouselStyle.transform = `translateX(-${currentPage * windowWidth}px)`;
   }, [currentPage])
@@ -99,6 +79,30 @@ export const App = () => {
     setCurrentPage(currentPage => currentPage + 1);
   }
 
+  const chooseCurrentPage = (newCurrentPage) => {
+    const contentLength = content.length;
+    carouselRef.current.style.transition = 'none';
+
+    if (newCurrentPage >= 1 && newCurrentPage <= contentLength) {
+      setCurrentPage(newCurrentPage)
+    } else if (newCurrentPage > contentLength) {
+      setCurrentPage(contentLength)
+    } else if (newCurrentPage < 1) {
+      setCurrentPage(1)
+    }
+  }
+
+  const getTrueCurrentPage = () => {
+    if (currentPage > content.length) {
+      return 1;
+    }
+    if (currentPage < 1) {
+      return content.length;
+    }
+
+    return currentPage;
+  }
+
   return (
     <div className='app'>
       <Carousel
@@ -111,6 +115,7 @@ export const App = () => {
         handleNext={handleNext}
         handlePrev={handlePrev}
       />
+      <PageTracker pagesCount={content.length} currentPage={getTrueCurrentPage()} chooseCurrentPage={chooseCurrentPage} />
     </div>
   )
 };

@@ -23,13 +23,11 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
 
   useLayoutEffect(() => {
     if (isMouseDown) {
-      console.log('current translate', currentTranslate);
       ref.current.style.transform = `translateX(-${currentTranslate}px)`;
     }
   }, [currentTranslate])
 
   const handleMouseDown = ({ pageX }) => {
-    console.log('mouse down')
     const carouselShift = +ref.current.style.transform.match(/\d+/)[0];
     ref.current.style.transition = 'none'
 
@@ -39,23 +37,17 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
   }
 
   const handleMouseUp = ({ pageX }) => {
-    console.log('mouse up')
-
     const moveRight = pageX - startMouse;
     const moveLeft = startMouse - pageX;
-    console.log('move left', moveLeft);
     ref.current.style.transition = '0.3s'
 
     if (moveLeft >= THRESHOLD) {
-      console.log('NEXT');
       handleNext();
       setStartMouse(pageX);
     } else if (moveRight >= THRESHOLD) {
-      console.log('PREV')
       handlePrev();
       setStartMouse(pageX);
     } else {
-      console.log('SAME')
       ref.current.style.transform = `translateX(-${carouselShift}px)`;
     }
 

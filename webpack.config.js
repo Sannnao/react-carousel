@@ -4,18 +4,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = (env) => {
-  return {
-    mode: 'development',
+  const common = {
     entry: './src/index.js',
     output: {
       filename: 'main.bundle.js',
-    },
-    devtool: 'inline-source-map',
-    devServer: {
-      contentBase: path.resolve(__dirname, 'dist'),
-      port: 9000,
-      hot: true,
-      open: true,
     },
     module: {
       rules: [
@@ -44,7 +36,28 @@ module.exports = (env) => {
         template: path.resolve(__dirname, 'src/index.html'),
       }),
       new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
-      new ReactRefreshWebpackPlugin(),
     ],
+  }
+
+  const dev = {
+    mode: 'development',
+    devtool: 'inline-source-map',
+    devServer: {
+      contentBase: path.resolve(__dirname, 'dist'),
+      port: 9000,
+      hot: true,
+      open: true,
+    },
   };
+
+  const prod = {
+    mode: 'production'
+  }
+
+  if (env.production) {
+    return {...common, ...prod};
+  } else if (env.development) {
+    common.plugins.push(new ReactRefreshWebpackPlugin());
+    return {...common, ...dev}
+  }
 };

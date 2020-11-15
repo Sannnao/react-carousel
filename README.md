@@ -6,4 +6,4 @@
 3. `npm install`
 4. `npm start`
 
-The entry point of a content is in `index.js` file. The App component accepts `content` prop which is array of react elements.
+The entry point of a content is in `src/index.js` file. The App component accepts `content` prop which is array of react elements.

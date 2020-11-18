@@ -16,9 +16,31 @@ export const App = ({ content }) => {
   const prevWindowWidth = useRef();
 
   useEffect(() => {
+    setTransform(carouselRef, currentPage * windowWidth);
+  }, [currentPage])
+
+  useEffect(() => {
+    carouselRef.current.style.transition = 'none';
+    setTransform(carouselRef, currentPage * windowWidth);
+  }, [windowWidth])
+
+  useEffect(() => {
+    const handleFullScreen = () => {
+      if (document.fullscreenElement) {
+        prevWindowWidth.current = windowWidth;
+      } else {
+        setWindowWidth(prevWindowWidth.current);
+      }
+    }
+    window.addEventListener('fullscreenchange', handleFullScreen)
+
+    return () => {
+      window.removeEventListener('fullscreenchange', handleFullScreen)
+    }
+  })
+
+  useEffect(() => {
     const handleWindowWidth = () => {
-      carouselRef.current.style.transition = 'none';
-      setTransform(carouselRef, currentPage * windowWidth);
       setWindowWidth(window.innerWidth);
     }
     window.addEventListener('resize', handleWindowWidth);
@@ -52,25 +74,6 @@ export const App = ({ content }) => {
       window.removeEventListener('transitioncancel', handleCornerPages)
     }
   })
-
-  useEffect(() => {
-    const handleFullScreen = (e) => {
-      if (document.fullscreenElement) {
-        prevWindowWidth.current = windowWidth;
-      } else {
-        setWindowWidth(prevWindowWidth.current);
-      }
-    }
-    window.addEventListener('fullscreenchange', handleFullScreen)
-
-    return () => {
-      window.removeEventListener('fullscreenchange', handleFullScreen)
-    }
-  })
-
-  useEffect(() => {
-    setTransform(carouselRef, currentPage * windowWidth);
-  }, [currentPage])
 
   useEffect(() => {
     setCarouselContent(carouselContent => {

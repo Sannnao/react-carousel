@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import './carousel.css';
 
-const THRESHOLD = 20;
+const CORDS_THRESHOLD = 150;
+const TIME_THRESHOLD = 300;
 
 export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, ref) => {
   const [startMouse, setStartMouse] = useState(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [currentTranslate, setCurrentTraslate] = useState(null);
   const [carouselShift, setCarouselShift] = useState(null);
+  const [timeDown, setTimeDown] = useState(null);
 
   useEffect(() => {
     window.addEventListener('mousedown', handleMouseDown)
@@ -46,6 +48,7 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
     const carouselShift = +ref.current.style.transform.match(/\d+/)[0];
     ref.current.style.transition = 'none'
 
+    setTimeDown(e.timeStamp);
     setCarouselShift(carouselShift);
     setStartMouse(startCords);
     setIsMouseDown(true);
@@ -63,12 +66,13 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
 
     const moveRight = endCords - startMouse;
     const moveLeft = startMouse - endCords;
-    ref.current.style.transition = '0.3s'
+    ref.current.style.transition = '0.3s';
+    const timeUp = Math.floor(e.timeStamp - timeDown);
 
-    if (moveLeft >= THRESHOLD) {
+    if (moveLeft > 0 && timeUp <= TIME_THRESHOLD || moveLeft >= CORDS_THRESHOLD) {
       handleNext();
       setStartMouse(endCords);
-    } else if (moveRight >= THRESHOLD) {
+    } else if (moveRight > 0 && timeUp <= TIME_THRESHOLD || moveRight >= CORDS_THRESHOLD) {
       handlePrev();
       setStartMouse(endCords);
     } else {

@@ -1,17 +1,5 @@
-.pagination {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  box-shadow: 2px 0 3px 0 grey;
-}
-
 .pagination__btn {
-  position: relative;
+  position: absolute;
   z-index: 99999;
   height: 100%;
   width: 8%;
@@ -28,10 +16,19 @@
   text-shadow: 0 0 5px grey;
 }
 
-.pagination__btn:first-child:hover {
+.pagination__btn--left {
+  left: 0;
+}
+
+.pagination__btn--right {
+  right: 0;
+}
+
+.pagination__btn--left:hover {
   background: linear-gradient(268deg, rgba(0,0,0,0.04805672268907568) 0%, rgba(0,0,0,0.058140756302521) 35%, rgba(0,0,0,0.064861694677871145) 64%);
 }
 
-.pagination__btn:last-child:hover {
+.pagination__btn--right:hover {
+  right: 0;
   background: linear-gradient(87deg, rgba(0,0,0,0.04805672268907568) 0%, rgba(0,0,0,0.058140756302521) 35%, rgba(0,0,0,0.064861694677871145) 64%);
 }

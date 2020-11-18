@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { setTransform } from '../../utils/setTransform';
 import './carousel.css';
 
 const CORDS_THRESHOLD = 150;
@@ -7,7 +8,7 @@ const TIME_THRESHOLD = 300;
 export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, ref) => {
   const [startMouse, setStartMouse] = useState(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [currentTranslate, setCurrentTraslate] = useState(null);
+  const [currentTranslate, setCurrentTranslate] = useState(null);
   const [carouselShift, setCarouselShift] = useState(null);
   const [timeDown, setTimeDown] = useState(null);
 
@@ -31,7 +32,7 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
 
   useLayoutEffect(() => {
     if (isMouseDown) {
-      ref.current.style.transform = `translateX(-${currentTranslate}px)`;
+      setTransform(ref, currentTranslate);
     }
   }, [currentTranslate])
 
@@ -76,7 +77,7 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
       handlePrev();
       setStartMouse(endCords);
     } else {
-      ref.current.style.transform = `translateX(-${carouselShift}px)`;
+      setTransform(ref, carouselShift);
     }
 
     setIsMouseDown(false);
@@ -95,7 +96,7 @@ export const Carousel = React.forwardRef(({ content, handleNext, handlePrev }, r
     if (isMouseDown) {
       const currTranslate = carouselShift - (moveCords - startMouse);
 
-      setCurrentTraslate(currTranslate);
+      setCurrentTranslate(currTranslate);
     }
   }
 

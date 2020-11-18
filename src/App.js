@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { setTransform } from './utils/setTransform';
 import './app.css';
 
 import {
@@ -12,11 +13,12 @@ export const App = ({ content }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const carouselRef = useRef(null);
+  const prevWindowWidth = useRef();
 
   useEffect(() => {
     const handleWindowWidth = () => {
       carouselRef.current.style.transition = 'none';
-      carouselRef.current.style.transform = `translateX(-${currentPage * windowWidth}px)`;
+      setTransform(carouselRef, currentPage * windowWidth);
       setWindowWidth(window.innerWidth);
     }
     window.addEventListener('resize', handleWindowWidth);
@@ -30,14 +32,14 @@ export const App = ({ content }) => {
         const lastPage = content.length;
         const carouselStyle = carouselRef.current.style;
         carouselStyle.transition = 'none';
-        carouselStyle.transform = `translateX(-${lastPage * windowWidth}px)`;
+        setTransform(carouselRef, lastPage * windowWidth);
         setCurrentPage(lastPage);
       }
       if (currentPage > content.length) {
         const resetPage = 1;
         const carouselStyle = carouselRef.current.style;
         carouselStyle.transition = 'none';
-        carouselStyle.transform = `translateX(-${resetPage * windowWidth}px)`;
+        setTransform(carouselRef, resetPage * windowWidth);
         setCurrentPage(resetPage);
       }
     }
@@ -52,8 +54,22 @@ export const App = ({ content }) => {
   })
 
   useEffect(() => {
-    const carouselStyle = carouselRef.current.style;
-    carouselStyle.transform = `translateX(-${currentPage * windowWidth}px)`;
+    const handleFullScreen = (e) => {
+      if (document.fullscreenElement) {
+        prevWindowWidth.current = windowWidth;
+      } else {
+        setWindowWidth(prevWindowWidth.current);
+      }
+    }
+    window.addEventListener('fullscreenchange', handleFullScreen)
+
+    return () => {
+      window.removeEventListener('fullscreenchange', handleFullScreen)
+    }
+  })
+
+  useEffect(() => {
+    setTransform(carouselRef, currentPage * windowWidth);
   }, [currentPage])
 
   useEffect(() => {
@@ -68,7 +84,7 @@ export const App = ({ content }) => {
     });
 
     carouselRef.current.style.transition = 'none';
-    carouselRef.current.style.transform = `translateX(-${currentPage * windowWidth}px)`;
+    setTransform(carouselRef, currentPage * windowWidth);
   }, [])
 
   const handlePrev = () => {

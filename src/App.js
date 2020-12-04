@@ -12,6 +12,7 @@ export const App = ({ content }) => {
   const [carouselContent, setCarouselContent] = useState(content);
   const [currentPage, setCurrentPage] = useState(1);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isTransition, setIsTransition] = useState(false);
   const carouselRef = useRef(null);
   const prevWindowWidth = useRef();
 
@@ -46,7 +47,7 @@ export const App = ({ content }) => {
     window.addEventListener('resize', handleWindowWidth);
 
     return () => window.removeEventListener('resize', handleWindowWidth);
-  }, [currentPage, windowWidth])
+  }, [])
 
   useEffect(() => {
     const handleCornerPages = () => {
@@ -64,14 +65,20 @@ export const App = ({ content }) => {
         setTransform(carouselRef, resetPage * windowWidth);
         setCurrentPage(resetPage);
       }
+
+      console.log('end')
+    }
+
+    const handleCancel = () => {
+      console.log('cancel')
     }
 
     window.addEventListener('transitionend', handleCornerPages)
-    window.addEventListener('transitioncancel', handleCornerPages)
+    window.addEventListener('transitioncancel', handleCancel)
 
     return () => {
       window.removeEventListener('transitionend', handleCornerPages)
-      window.removeEventListener('transitioncancel', handleCornerPages)
+      window.removeEventListener('transitioncancel', handleCancel)
     }
   })
 
@@ -89,6 +96,10 @@ export const App = ({ content }) => {
     carouselRef.current.style.transition = 'none';
     setTransform(carouselRef, currentPage * windowWidth);
   }, [])
+
+  const handleTransition = (isTransition) => {
+    setIsTransition(isTransition);
+  }
 
   const handlePrev = () => {
     setCurrentPage(currentPage => currentPage - 1);
@@ -129,6 +140,8 @@ export const App = ({ content }) => {
         content={carouselContent}
         handleNext={handleNext}
         handlePrev={handlePrev}
+        handleTransition={handleTransition}
+        isTransition={isTransition}
       />
       <Pagination
         handleNext={handleNext}
